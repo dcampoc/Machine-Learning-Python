@@ -54,6 +54,7 @@ plt.xlabel('Number of rooms')
 plt.ylabel('Value of the house /1000 ($)')
 plt.show()
 
+# USING ALL FEATURES FOR PREDICTING
 reg_all = linear_model.LinearRegression()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -135,9 +136,25 @@ for alpha in alpha_space:
 
 # Display the plot
 display_plot(ridge_scores, ridge_scores_std)
-print('The best alpha for the ridge regularization is: ' + str(alpha_space[np.argmax(np.array(ridge_scores))]))
+print('The best (manual) alpha for the ridge regularization is: ' + str(alpha_space[np.argmax(np.array(ridge_scores))]))
 
+#########
+print('optimization by grid search'.upper())
+from sklearn.model_selection import GridSearchCV
+# Setup the hyperparameter grid
+alpha_space = np.logspace(-4, 0, 50)
+param_grid = {'alpha': alpha_space}
 
+# Instantiate a the regression: logreg
+ridge = Ridge(normalize=True)
+
+# Instantiate the GridSearchCV object: logreg_cv
+ridge_cv = GridSearchCV(ridge, param_grid, cv=10)
+
+# Fit it to the data
+ridge_cv.fit(X,y)
+print("Tuned Logistic Regression Parameters: {}".format(ridge_cv.best_params_)) 
+print("Best score is {}".format(ridge_cv.best_score_))
 
 
 
